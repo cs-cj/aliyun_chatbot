@@ -33,13 +33,10 @@ RSpec.describe AliyunChatbot do
       end
     else
       it "client send_message ok" do    
-        puts ak_id
-        puts ak_secret
-        puts instance_id
         client = AliyunChatbot::Client.new(ak_id, ak_secret)
         # instance_id from chatbot infos
         res = client.send_message(instance_id , "hello 你好") 
-        puts res.class
+        expect(res.class).to eq(Hash)
         puts res
       end
     end
