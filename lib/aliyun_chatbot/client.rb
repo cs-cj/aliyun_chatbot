@@ -1,3 +1,4 @@
+require "cgi"
 module AliyunChatbot
   class Client
     include AliyunChatbot::Api
@@ -16,20 +17,24 @@ module AliyunChatbot
       
       signature = signature(whole_params)
       whole_params.merge!({Signature: signature}) 
-      
-      url = URL_BASE + params_to_string(whole_params)
 
+      puts "whole_params" 
+      puts whole_params
+
+      scheme = 'https'
+      url = scheme + "://" + URL_BASE + "?" +params_to_string(whole_params)
+      puts "url: " + url
       response = HTTP.get(url)
-      puts response.body
-      JSON.parse(response.body) rescue nil
+      JSON.parse(response) rescue nil
     end
 
     # todo
     def params_to_string(params)
-      query = items.sort.map do |k, v|
-        v = v.to_json if v.class != String 
-        "#{k}=#{v}" if v.to_s != ''
+      query = params.sort.map do |k, v|
+        # v = v.to_json if v.to_s != '' && v.class != String 
+        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}" if v.to_s != ''
       end.compact.join('&')
+      puts "params_to_string"
       puts query
       query
     end
